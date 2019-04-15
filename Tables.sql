@@ -19,8 +19,8 @@ CREATE TABLE EMPLOYEE (
     Super_ssn long,
     Dno int,
     /*Constraints can go at the bottom like this*/
-    PRIMARY KEY (Ssn)
-#     FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber)
+    PRIMARY KEY (Ssn),
+    FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber)
 );
 
 
@@ -34,11 +34,11 @@ CREATE TABLE DEPARTMENT (
 );
 
 CREATE TABLE DEPT_LOCATIONS (
-    Dnumber int unique not null,
-    Dlocation varchar(20) unique not null,
+    Dnumber int,
+    Dlocation varchar(20),
     /*Constraints*/
-    PRIMARY KEY (Dnumber)
-#     FOREIGN KEY (Dnumber) REFERENCES DEPARTMENT(Dnumber)
+    PRIMARY KEY (Dnumber, Dlocation),
+    FOREIGN KEY (Dnumber) REFERENCES DEPARTMENT(Dnumber)
 );
 
 CREATE TABLE PROJECT (
@@ -47,16 +47,17 @@ CREATE TABLE PROJECT (
     Plocation varchar(20),
     Dnum int,
     /*Constraints*/
-    PRIMARY KEY (Pnumber)
-#     FOREIGN KEY (Dnum) REFERENCES DEPARTMENT(Dnumber)
+    PRIMARY KEY (Pnumber),
+    FOREIGN KEY (Dnum) REFERENCES DEPARTMENT(Dnumber)
 );
 
 CREATE TABLE WORKS_ON (
     Essn int,
     Pno int,
-    Hours float
+    Hours float,
     /*Constraints*/
-#     FOREIGN KEY (Pno) REFERENCES PROJECT(Pnumber)
+    PRIMARY KEY (Essn, Pno),
+    FOREIGN KEY (Pno) REFERENCES PROJECT(Pnumber)
 );
 
 CREATE TABLE DEPENDENT (
@@ -64,10 +65,10 @@ CREATE TABLE DEPENDENT (
     Dependent_name varchar(20),
     Sex char,
     Bdate varchar(20), /*MV*/
-    Relationship varchar(20)
+    Relationship varchar(20),
     /*Constraints*/
-#     PRIMARY KEY (Dependent_name)
-#     FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn)
+    PRIMARY KEY (Essn, Dependent_name),
+    FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn)
 );
 
 
@@ -108,9 +109,9 @@ VALUES ('4', 'Stafford');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
 VALUES ('5', 'Bellaire');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
-VALUES ('2', 'Sugarland');
+VALUES ('5', 'Sugarland');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
-VALUES ('3', 'Houston1');
+VALUES ('5', 'Houston1');
 
 
 /* WORKS_ON TABLE */
