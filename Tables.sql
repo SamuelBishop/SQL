@@ -1,11 +1,11 @@
-/* TABLES */
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS EMPLOYEE;
 DROP TABLE IF EXISTS DEPARTMENT;
 DROP TABLE IF EXISTS WORKS_ON;
 DROP TABLE IF EXISTS DEPT_LOCATIONS;
 DROP TABLE IF EXISTS PROJECT;
 DROP TABLE IF EXISTS DEPENDENT;
-
+/* TABLES */
 /* NOTE: We need the primary and foreign key constraints */
 CREATE TABLE EMPLOYEE (
     Fname varchar(20),
@@ -34,11 +34,11 @@ CREATE TABLE DEPARTMENT (
 );
 
 CREATE TABLE DEPT_LOCATIONS (
-    Dnumber int,
-    Dlocation varchar(20),
+    Dnumber int unique not null,
+    Dlocation varchar(20) unique not null,
     /*Constraints*/
-    PRIMARY KEY (Dnumber, Dlocation),
-    FOREIGN KEY (Dnumber) REFERENCES DEPARTMENT(Dnumber)
+    PRIMARY KEY (Dnumber)
+#     FOREIGN KEY (Dnumber) REFERENCES DEPARTMENT(Dnumber)
 );
 
 CREATE TABLE PROJECT (
@@ -54,10 +54,9 @@ CREATE TABLE PROJECT (
 CREATE TABLE WORKS_ON (
     Essn int,
     Pno int,
-    Hours float,
+    Hours float
     /*Constraints*/
-    FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn),
-    FOREIGN KEY (Pno) REFERENCES PROJECT(Pnumber)
+#     FOREIGN KEY (Pno) REFERENCES PROJECT(Pnumber)
 );
 
 CREATE TABLE DEPENDENT (
@@ -65,10 +64,10 @@ CREATE TABLE DEPENDENT (
     Dependent_name varchar(20),
     Sex char,
     Bdate varchar(20), /*MV*/
-    Relationship varchar(20),
+    Relationship varchar(20)
     /*Constraints*/
-    PRIMARY KEY (Dependent_name, Essn),
-    FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn)
+#     PRIMARY KEY (Dependent_name)
+#     FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn)
 );
 
 
@@ -109,9 +108,9 @@ VALUES ('4', 'Stafford');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
 VALUES ('5', 'Bellaire');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
-VALUES ('5', 'Sugarland');
+VALUES ('2', 'Sugarland');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
-VALUES ('5', 'Houston1');
+VALUES ('3', 'Houston1');
 
 
 /* WORKS_ON TABLE */
@@ -200,14 +199,3 @@ from WORKS_ON;
 
 select *
 from DEPENDENT;
-
-/* DOING THAT ONE QUESTION */
-
-
-/* DROPPING ALL TABLES */
-DROP TABLE IF EXISTS EMPLOYEE;
-DROP TABLE IF EXISTS DEPARTMENT;
-DROP TABLE IF EXISTS WORKS_ON;
-DROP TABLE IF EXISTS DEPT_LOCATIONS;
-DROP TABLE IF EXISTS PROJECT;
-DROP TABLE IF EXISTS DEPENDENT;
