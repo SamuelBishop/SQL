@@ -1,12 +1,15 @@
-SET FOREIGN_KEY_CHECKS=0;
+/* DROPPING ALREADY EXISTING TABLES AT THE BEGINNING */
 DROP TABLE IF EXISTS EMPLOYEE;
 DROP TABLE IF EXISTS DEPARTMENT;
 DROP TABLE IF EXISTS WORKS_ON;
 DROP TABLE IF EXISTS DEPT_LOCATIONS;
 DROP TABLE IF EXISTS PROJECT;
 DROP TABLE IF EXISTS DEPENDENT;
-/* TABLES */
-/* NOTE: We need the primary and foreign key constraints */
+
+
+
+/* CREATION OF TABLES */
+
 CREATE TABLE EMPLOYEE (
     Fname varchar(20),
     Minit char,
@@ -22,7 +25,6 @@ CREATE TABLE EMPLOYEE (
     PRIMARY KEY (Ssn),
     FOREIGN KEY (Dno) REFERENCES DEPARTMENT(Dnumber)
 );
-
 
 CREATE TABLE DEPARTMENT (
     Dname varchar(20),
@@ -113,7 +115,6 @@ VALUES ('5', 'Sugarland');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
 VALUES ('5', 'Houston1');
 
-
 /* WORKS_ON TABLE */
 INSERT INTO WORKS_ON (Essn, Pno, Hours)
 VALUES ('123456789', '1', '32.5');
@@ -179,12 +180,12 @@ INSERT INTO DEPENDENT (Essn, Dependent_name, Sex, Bdate, Relationship)
 VALUES ('123456789', 'Elizabeth', 'F', '1967-05-05', 'spouse');
 
 
+
 /* QUERIES */
 
-/* SELECTING THE ENTIRE TABLE THINGIE */
+/* DISPLAYING ALL INFORMATION FROM ALL TABLES */
 select *
 from EMPLOYEE;
-#      DEPARTMENT, DEPT_LOCATIONS, PROJECT, WORKS_ON, DEPENDENT
 
 select *
 from DEPARTMENT;
@@ -201,11 +202,90 @@ from WORKS_ON;
 select *
 from DEPENDENT;
 
-/* Implementing the SQL queries in Exercise 6.16 */
+/* IMPLEMENTING THE SQL QUERIES IN EXERCISE 6.16 */
+
+/* a) a. Retrieve the names of all employees in department 5 who work more than
+   10 hours per week on the ProductX project. */
+    select Fname, Minit, Lname
+    from EMPLOYEE, DEPARTMENT, PROJECT, WORKS_ON
+    where EMPLOYEE.Dno = DEPARTMENT.Dnumber and  PROJECT.Dnum = DEPARTMENT.Dnumber and WORKS_ON.Pno = PROJECT.Pnumber and WORKS_ON.Essn = EMPLOYEE.Ssn and
+          DEPARTMENT.Dnumber = '5' and WORKS_ON.Hours > 10 and PROJECT.Pname = 'PRODUCTX';
+
+/* b. List the names of all employees who have a dependent with the same first
+    name as themselves. */
+    select Fname, Minit, Lname
+    from EMPLOYEE, DEPENDENT
+    where EMPLOYEE.Ssn = DEPENDENT.Essn and
+          EMPLOYEE.Fname = DEPENDENT.Dependent_name;
+
+/* c. Find the names of all employees who are directly supervised by ‘Franklin
+   Wong’. */
+    select Fname, Minit, Lname
+    from EMPLOYEE
+    where EMPLOYEE.Super_ssn = (select Ssn
+                                from EMPLOYEE
+                                where EMPLOYEE.Fname = 'Franklin' and EMPLOYEE.Lname = 'Wong');
+
+/* d. For each project, list the project name and the total hours per week (by all
+   employees) spent on that project. */
+    select Pname, SUM(Hours)
+    from PROJECT, WORKS_ON
+    where PROJECT.Pnumber = WORKS_ON.Pno
+    group by Project.Pnumber;
+
+/* e. Retrieve the names of all employees who work on every project. */
+    select Fname, Minit, Lname
+    from EMPLOYEE
+    where NOT EXISTS (select Pnumber
+                      from PROJECT
+                      where NOT EXISTS(select *
+                                       from WORKS_ON
+                                       where PROJECT.Pnumber = WORKS_ON.Pno and EMPLOYEE.Ssn = WORKS_ON.Essn));
+
+/* f. Retrieve the names of all employees who do not work on any project. */
+    select Fname, Minit, Lname
+    from EMPLOYEE
+    where NOT EXISTS (select *
+                      from WORKS_ON
+                      where WORKS_ON.Essn = EMPLOYEE.Ssn);
+
+/* g. For each department, retrieve the department name and the average salary of all
+   employees working in that department. */
+    select Dname, AVG(Salary)
+    from DEPARTMENT, EMPLOYEE
+    where DEPARTMENT.Dnumber = EMPLOYEE.Dno
+    group by DEPARTMENT.Dname;
+
+/* h. Retrieve the average salary of all female employees. */
+    select AVG(Salary)
+    from EMPLOYEE
+    where EMPLOYEE.Sex = 'F';
+
+/* i. Find the names and addresses of all employees who work on at least one project
+   located in Houston but whose department has no location in
+   Houston. */
+    select Fname, Minit, Lname, Address
+    from EMPLOYEE
+    where exists(select *
+                 from WORKS_ON, PROJECT
+                 where EMPLOYEE.Ssn = WORKS_ON.Essn and WORKS_ON.Pno = PROJECT.Pnumber and PROJECT.Plocation = 'Houston')
+                       and not exists(select *
+                                      from DEPT_LOCATIONS
+                                      where EMPLOYEE.Dno = DEPT_LOCATIONS.Dnumber and DEPT_LOCATIONS.Dlocation = 'Houston');
+
+/* j. List the last names of all department managers who have no dependents. */
+    select Lname
+    from EMPLOYEE
+    where exists(select *
+                 from DEPARTMENT
+                 where EMPLOYEE.Ssn = DEPARTMENT.Mgr_ssn) and
+                 not exists(select *
+                            from DEPENDENT
+                            where EMPLOYEE.Ssn = DEPENDENT.Essn);
 
 
 
-/* Dropping everything at the end */
+/* DROPPING EVERYTHING AT THE END */
 DROP TABLE IF EXISTS EMPLOYEE;
 DROP TABLE IF EXISTS DEPARTMENT;
 DROP TABLE IF EXISTS WORKS_ON;
