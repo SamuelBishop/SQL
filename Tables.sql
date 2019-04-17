@@ -1,4 +1,5 @@
 /* DROPPING ALREADY EXISTING TABLES AT THE BEGINNING */
+SET foreign_key_checks=0;
 DROP TABLE IF EXISTS EMPLOYEE;
 DROP TABLE IF EXISTS DEPARTMENT;
 DROP TABLE IF EXISTS WORKS_ON;
@@ -79,7 +80,7 @@ CREATE TABLE DEPENDENT (
 
 /* EMPLOYEE TABLE */
 INSERT INTO EMPLOYEE (Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Super_ssn, Dno)
-Values ('John', 'B', 'Smith', '123456789', '1965-01-09', '731 Fondren, Houston, TX', 'M', '30000', '3334445555', '5');
+Values ('John', 'B', 'Smith', '123456789', '1965-01-09', '731 Fondren, Houston, TX', 'M', '30000', '333445555', '5');
 INSERT INTO EMPLOYEE (Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Super_ssn, Dno)
 Values ('Franklin', 'T', 'Wong', '333445555', '1955-12-08', '638 Voss, Houston, TX', 'M', '40000', '888665555', '5');
 INSERT INTO EMPLOYEE (Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Super_ssn, Dno)
@@ -113,7 +114,7 @@ VALUES ('5', 'Bellaire');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
 VALUES ('5', 'Sugarland');
 INSERT INTO DEPT_LOCATIONS (Dnumber, Dlocation)
-VALUES ('5', 'Houston1');
+VALUES ('5', 'Houston');
 
 /* WORKS_ON TABLE */
 INSERT INTO WORKS_ON (Essn, Pno, Hours)
@@ -272,6 +273,7 @@ from DEPENDENT;
                        and not exists(select *
                                       from DEPT_LOCATIONS
                                       where EMPLOYEE.Dno = DEPT_LOCATIONS.Dnumber and DEPT_LOCATIONS.Dlocation = 'Houston');
+
 
 /* j. List the last names of all department managers who have no dependents. */
     select Lname
